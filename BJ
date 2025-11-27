@@ -1,3 +1,65 @@
+import random
 def main():
+    def intro():
+        print("Welcome to Black Jack!")
+        
+        while True:
+            try:
+                money_input = input("How much money do you wish to spend overall? $")
+                sum_amount = float(money_input)
+                if sum_amount <= 0:
+                    print("Please enter a valid amount greater than $0.")
+                    continue 
+                break 
+
+            except ValueError:
+                print("Invalid input. Please enter a numerical amount.")
+        conf = input(f"You have chosen to spend ${sum_amount:.2f} total. Confirm Y/N. ")
+
+        if conf.lower() == 'y' or "yes": 
+            print("Great! Let's get started.")
+            black_jack(sum_amount) 
+
+        elif conf.lower() == 'n' or "no":
+            print("Restarting, Enter a new amount.")
+            print("-----------------------------")
+            intro()
+            
+        return
+
+    def cards():
+        deck = [2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11] * 4
+        random.shuffle(deck)
+        return deck
+
+    def black_jack(initial_sum):
+        print(f"Game started with ${initial_sum}. Please Review README.md for game instructions.")
+        betammt = input("How much is your bet for this round? $")
+        betammt_float = float(betammt)
+
+        if betammt_float > initial_sum:
+            print("-----------------------------")
+            print("Bet exceeds available funds. Please enter a valid bet amount.")
+            print(f"You currently have ${initial_sum}.")
+            print("-----------------------------")
+            black_jack(initial_sum)
+
+        elif betammt_float <= 0:
+            print("-----------------------------")
+            print("Please enter a bet amount greater than $0.")
+            print(f"You currently have ${initial_sum}.")
+            print("-----------------------------")
+            black_jack(initial_sum)
+        
+        
+        
+        return
+    
+   
+
+    intro()
 
     return
+
+if __name__ == "__main__":
+    main()
