@@ -27,13 +27,23 @@ def main():
             
         return
 
-    def cards():
-        deck = [2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11] * 4
-        random.shuffle(deck)
+    def create_deck():
+        suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades']
+        ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace']
+        deck = [f'{rank} of {suit}' for suit in suits for rank in ranks]
         return deck
+    
+    def shuffle_deck(deck):
+        random.shuffle(deck)
+        print("-----------------------------")
+        print("The Dealer has shuffled.")
+        print("-----------------------------")
 
     def black_jack(initial_sum):
+
+        print("-----------------------------")
         print(f"Game started with ${initial_sum}. Please Review README.md for game instructions.")
+        print("-----------------------------")
         betammt = input("How much is your bet for this round? $")
         betammt_float = float(betammt)
 
@@ -51,11 +61,33 @@ def main():
             print("-----------------------------")
             black_jack(initial_sum)
         
+        elif betammt_float == initial_sum:
+            print("-----------------------------")
+            print(f"Bet of ${betammt_float} accepted. All in! Good luck!")
+            initial_sum = 0
+            sum = initial_sum
+            deck = create_deck() 
+            shuffle_deck(deck)
+            print("You have been delt {} and a {}.")
+            print("The dealer been  dealt {} and a {}.")
         
-        
+        elif betammt_float < initial_sum:
+            print("-----------------------------")
+            print(f"Bet of ${betammt_float} accepted. Good luck!")
+            sum = initial_sum - betammt_float
+            deck = create_deck()
+            shuffle_deck(deck)
+            print("You have been delt {} and a {}.")
+            print("The dealer been  dealt {} and a {}.")
         return
     
-   
+    def outro(inital_sum):
+        print("-----------------------------")
+        print(f"You have left the game. Overall you have ${inital_sum} remaining.")
+        print("Thank you for playing Black Jack! Goodbye!")
+        pass 
+
+        return
 
     intro()
 
