@@ -1,8 +1,9 @@
 import random
+import time
 def main():
     def intro():
         print("Welcome to Black Jack!")
-        
+        time.sleep(1)
         while True:
             try:
                 money_input = input("How much money do you wish to spend overall? $")
@@ -15,14 +16,19 @@ def main():
             except ValueError:
                 print("Invalid input. Please enter a numerical amount.")
         conf = input(f"You have chosen to spend ${sum_amount:.2f} total. Confirm Y/N. ")
-
-        if conf.lower() == 'y' or "yes": 
+        time.sleep(1)
+        print("-----------------------------")
+                    
+        if conf.lower() not in ['y', 'n', 'yes', 'no']:
+            print("Please enter Y for Yes or N for No.")
+                        
+        elif conf.lower() == 'y' or "yes": 
             print("Great! Let's get started.")
             black_jack(sum_amount) 
 
         elif conf.lower() == 'n' or "no":
             print("Restarting, Enter a new amount.")
-            print("-----------------------------")
+            print("-----------------------------")              
             intro()
             
         return
@@ -38,18 +44,52 @@ def main():
         print("-----------------------------")
         print("The Dealer has shuffled.")
         print("-----------------------------")
+        return deck
+    
+    def deal_cards(deck, num_cards, hand):
+        """Deals a specified number of cards from the deck to a hand."""
+        for _ in range(num_cards):
+            if deck:
+                card = deck.pop(0) # Remove the top card from the deck
+                hand.append(card)  # Add the card to the hand
+            else:
+                print("Deck is empty!")
+        return hand
 
+    def calculate_hand_value(hand):
+        """Calculates the value of a Blackjack hand."""
+        value = 0
+        ace_count = 0
+        for card in hand:
+            rank = card.split(' ')[0]
+            if rank.isdigit():
+                value += int(rank)
+            elif rank in ['Jack', 'Queen', 'King']:
+                value += 10
+            elif rank == 'Ace':
+                value += 11
+                ace_count += 1
+        
+        # Adjust for Aces if value is over 21
+        while value > 21 and ace_count > 0:
+            value -= 10
+            ace_count -= 1
+        return value
+    
     def black_jack(initial_sum):
 
         print("-----------------------------")
         print(f"Game started with ${initial_sum}. Please Review README.md for game instructions.")
         print("-----------------------------")
+        time.sleep(2)
         betammt = input("How much is your bet for this round? $")
         betammt_float = float(betammt)
+        
 
         if betammt_float > initial_sum:
             print("-----------------------------")
             print("Bet exceeds available funds. Please enter a valid bet amount.")
+            time.sleep(1)
             print(f"You currently have ${initial_sum}.")
             print("-----------------------------")
             black_jack(initial_sum)
@@ -57,6 +97,7 @@ def main():
         elif betammt_float <= 0:
             print("-----------------------------")
             print("Please enter a bet amount greater than $0.")
+            time.sleep(1)
             print(f"You currently have ${initial_sum}.")
             print("-----------------------------")
             black_jack(initial_sum)
@@ -66,21 +107,124 @@ def main():
             print(f"Bet of ${betammt_float} accepted. All in! Good luck!")
             initial_sum = 0
             sum = initial_sum
-            deck = create_deck() 
-            shuffle_deck(deck)
-            print("You have been delt {} and a {}.")
-            print("The dealer been  dealt {} and a {}.")
-        
+            time.sleep(1)
+            game(initial_sum)
+
         elif betammt_float < initial_sum:
-            print("-----------------------------")
-            print(f"Bet of ${betammt_float} accepted. Good luck!")
             sum = initial_sum - betammt_float
-            deck = create_deck()
-            shuffle_deck(deck)
-            print("You have been delt {} and a {}.")
-            print("The dealer been  dealt {} and a {}.")
-        return
+            print("-----------------------------")
+            print(f"Bet of ${betammt_float} accepted. You have {sum} remaining. Good luck!")
+            time.sleep(1)
+            game(initial_sum)
+
+        return initial_sum
     
+    def game(inital_sum):
+
+        player_hand = []
+        dealer_hand = []
+        deck = create_deck()
+        shuffle_deck(deck)
+        deal_cards(deck, 2, player_hand)
+        deal_cards(deck, 2, dealer_hand)
+
+        print(f"You have been dealt {player_hand[0]} and a {player_hand[1]}.")
+        print(f"The dealer has been dealt {dealer_hand[0]} and a Face Down Card.")
+
+        ph = calculate_hand_value(player_hand)
+        dh = calculate_hand_value(dealer_hand)
+
+        time.sleep(1)
+        
+        print("-----------------------------")
+        
+        if ph == 21:
+            print("Black Jack!")
+            print("-----------------------------")
+            time.sleep(1)
+            print(f"Dealer reveals their face down card: {dealer_hand[1]}. Dealer's total is {dh}.")
+
+        time.sleep(1)
+
+        while ph < 21:
+            print(f"Your current hand is: {player_hand} (Total: {ph})")
+            print("-----------------------------")
+
+            hs = input("Would you like to (H)it or (S)tand? ").lower()
+            print("-----------------------------")
+            time.sleep(1)
+
+            if hs.lower() in ('h', 'hit'):
+                deal_cards(deck, 1, player_hand)
+                ph = calculate_hand_value(player_hand) 
+                print("You chose to hit.")
+                print("-----------------------------")
+                time.sleep(1)
+
+                if ph > 21:
+                    print(f"You busted! With a score of {ph}. Dealer wins.")
+                    print("-----------------------------")
+                    post()
+                    break 
+
+            elif hs.lower() in ('s', 'stand'):
+                print(f"You chose to stand with a total of {ph}.")
+                print("-----------------------------")
+                time.sleep(1)
+
+                print(f"Dealer reveals their face down card: {dealer_hand[1]}. A total of {dh}.")
+                time.sleep(1)
+                print("-----------------------------")
+                
+                if dh == 21:
+                    print("Dealer has Black Jack!")
+
+                if dh > 21:
+                    print("Dealer busted! You win!")
+                    post()
+
+                if dh > ph and dh < 21:
+                    print("Dealer wins!")
+                    print("-----------------------------")
+                    time.sleep(1)
+                    post()
+
+                if dh < ph and dh < 21:
+                    print("The dealer hits.")
+                    print("-----------------------------")
+                    time.sleep(1)
+                    dealer_hand = deal_cards(deck, 1, dealer_hand)
+                    dh = calculate_hand_value(dealer_hand)
+                    print(f"Dealer's new card is {dealer_hand[-1]}. Dealer's total is now {dh}.")
+
+                    if dh > 21:
+                        print("Dealer busted! You win!")
+                        post()
+
+                    if dh > ph:
+                        print("Dealer wins!")
+                        print("-----------------------------")
+                        post()
+
+                if dh == ph:
+                    print("It's a tie!")
+                    print("-----------------------------")
+                    inputp = input("Would you like to play another round? Y/N. ")
+                    if inputp.lower() in ('y', 'yes'):
+                        black_jack(inital_sum)
+                    elif inputp.lower() in ('n', 'no'):
+                        outro(inital_sum)
+                
+                break 
+            else:
+                print("Invalid input. Please enter 'H', 'Hit', 'S', or 'Stand'.")
+               
+
+    def post():
+        print("Done")
+        pass
+
+
     def outro(inital_sum):
         print("-----------------------------")
         print(f"You have left the game. Overall you have ${inital_sum} remaining.")
