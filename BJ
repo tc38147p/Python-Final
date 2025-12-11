@@ -1,5 +1,6 @@
 import random
 import time
+60
 def main():
     def intro():
         print("Welcome to Black Jack!")
@@ -7,15 +8,15 @@ def main():
         while True:
             try:
                 money_input = input("How much money do you wish to spend overall? $")
-                sum_amount = float(money_input)
-                if sum_amount <= 0:
+                initial_sum = float(money_input)
+                if initial_sum <= 0:
                     print("Please enter a valid amount greater than $0.")
                     continue 
                 break 
 
             except ValueError:
                 print("Invalid input. Please enter a numerical amount.")
-        conf = input(f"You have chosen to spend ${sum_amount:.2f} total. Confirm Y/N. ")
+        conf = input(f"You have chosen to spend ${initial_sum:.2f} total. Confirm Y/N. ")
         time.sleep(1)
         print("-----------------------------")
                     
@@ -24,14 +25,14 @@ def main():
                         
         elif conf.lower() == 'y' or "yes": 
             print("Great! Let's get started.")
-            black_jack(sum_amount) 
+            black_jack(initial_sum) 
 
         elif conf.lower() == 'n' or "no":
             print("Restarting, Enter a new amount.")
             print("-----------------------------")              
             intro()
             
-        return
+        return initial_sum
 
     def create_deck():
         suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades']
@@ -108,18 +109,18 @@ def main():
             initial_sum = 0
             sum = initial_sum
             time.sleep(1)
-            game(initial_sum)
+            game(initial_sum, betammt_float)
 
         elif betammt_float < initial_sum:
             sum = initial_sum - betammt_float
             print("-----------------------------")
             print(f"Bet of ${betammt_float} accepted. You have {sum} remaining. Good luck!")
             time.sleep(1)
-            game(initial_sum)
+            game(initial_sum, betammt_float)
 
-        return initial_sum
+        return initial_sum , betammt_float
     
-    def game(inital_sum):
+    def game(initial_sum, betammt_float):
 
         player_hand = []
         dealer_hand = []
@@ -144,6 +145,15 @@ def main():
             time.sleep(1)
             print(f"Dealer reveals their face down card: {dealer_hand[1]}. Dealer's total is {dh}.")
 
+            if dh == 21:
+                print("Dealer also has Black Jack! It's a tie!")
+                post(initial_sum, win , betammt_float)
+            
+            if dh < 21:
+                print("You win!")
+                win = 1
+                post(initial_sum, win , betammt_float)
+
         time.sleep(1)
 
         while ph < 21:
@@ -164,7 +174,8 @@ def main():
                 if ph > 21:
                     print(f"You busted! With a score of {ph}. Dealer wins.")
                     print("-----------------------------")
-                    post()
+                    win = 0
+                    post(initial_sum,win, betammt_float)
                     break 
 
             elif hs.lower() in ('s', 'stand'):
@@ -176,18 +187,35 @@ def main():
                 time.sleep(1)
                 print("-----------------------------")
                 
+                while dh < 17:
+                    print("Dealer hits.")
+                    print("-----------------------------")
+                    time.sleep(1)
+                    dealer_hand = deal_cards(deck, 1, dealer_hand)
+                    dh = calculate_hand_value(dealer_hand)
+                    print(f"Dealer's new card is {dealer_hand[-1]}. Dealer's total is now {dh}.")
+
+                    if dh > 21:
+                        print("Dealer busted! You win!")
+                        print("-----------------------------")
+                        win = 1
+                        post(initial_sum, win , betammt_float)
+
+                    time.sleep(1)
+
                 if dh == 21:
                     print("Dealer has Black Jack!")
-
-                if dh > 21:
-                    print("Dealer busted! You win!")
-                    post()
+                    print("Dealer wins!")
+                    print("-----------------------------")
+                    win = 0
+                    post(initial_sum, win , betammt_float)
 
                 if dh > ph and dh < 21:
                     print("Dealer wins!")
                     print("-----------------------------")
                     time.sleep(1)
-                    post()
+                    win = 0 
+                    post(initial_sum, win , betammt_float)
 
                 if dh < ph and dh < 21:
                     print("The dealer hits.")
@@ -199,40 +227,72 @@ def main():
 
                     if dh > 21:
                         print("Dealer busted! You win!")
-                        post()
+                        win = 1
+                        post(initial_sum, win , betammt_float)
 
                     if dh > ph:
                         print("Dealer wins!")
                         print("-----------------------------")
-                        post()
+                        win = 0
+                        post(initial_sum, win , betammt_float)
 
                 if dh == ph:
                     print("It's a tie!")
                     print("-----------------------------")
-                    inputp = input("Would you like to play another round? Y/N. ")
-                    if inputp.lower() in ('y', 'yes'):
-                        black_jack(inital_sum)
-                    elif inputp.lower() in ('n', 'no'):
-                        outro(inital_sum)
+                    win = 2
+                    post(initial_sum, win , betammt_float)
                 
                 break 
             else:
                 print("Invalid input. Please enter 'H', 'Hit', 'S', or 'Stand'.")
-               
 
-    def post():
-        print("Done")
-        pass
+        return   
 
+    def post(initial_sum, win , betammt_float):
+        print("The round is over.")
+        print("-----------------------------")
+        time.sleep(1)
 
+        wi = betammt_float * 2
+        lo = betammt_float
+        tie = betammt_float
+
+        if win == 1:
+            print(f"You won this round! You have been awarded {wi} your winnings.")
+            initial_sum = initial_sum + betammt_float
+        elif win == 0:
+            print(f"You lost this round. Your bet of {lo} been deducted from your total.")
+            initial_sum = initial_sum - betammt_float 
+        elif win == 2:
+            print(f"This round was a tie. Your bet of {tie} has been returned to you.")
+            if initial_sum == 0:
+                initial_sum = betammt_float
+            else: initial_sum = initial_sum40
+        
+        if initial_sum <= 0:
+            print("You have run out of money to play. Game over.")
+            outro(initial_sum)
+
+        elif initial_sum > 0:
+            print("-----------------------------")
+            print(f"You currently have ${initial_sum} remaining.")
+            cont = input("Would you like to play another round? Y/N ").lower()
+            if cont in ('y', 'yes'):
+                black_jack(initial_sum)
+            elif cont in ('n', 'no'):
+                outro(initial_sum)
+            else:
+                print("Invalid input. Please enter Y for Yes or N for No.")
+        
+        return initial_sum
+        
     def outro(inital_sum):
         print("-----------------------------")
         print(f"You have left the game. Overall you have ${inital_sum} remaining.")
-        print("Thank you for playing Black Jack! Goodbye!")
-        pass 
+        print("Thank you for playing Black Jack! Goodbye!") 
 
         return
-
+    
     intro()
 
     return
