@@ -4,10 +4,10 @@ WELCOME TO BLACKJACK.
 
 Blackjack is a card game consisting of a dealer and a number of players. This program is a simulation of a real game.
 
-- Each player is required to put up a bet ammount for the game to begin.
-- The ammount cannot be more than you have.
+- Each player is required to put up a bet amount for the game to begin.
+- The amount cannot be more than you have.
 
-The dealer will then match that ammount if you win.
+The dealer will then match that amount if you win.
 
 GOAL - To get 21 , if not , as close as possible.
 
@@ -46,7 +46,7 @@ GOAL - To get 21 , if not , as close as possible.
 
     - This simualtion is based on the ground rules and does not inhernet the many implications such as 
         - Withdrawing half the bet
-        - Blackjack earns 3:2 of bet ammount
+        - Blackjack earns 3:2 of bet amount
     
     - I Want an A in CS 121
 
