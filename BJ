@@ -12,6 +12,9 @@ def main():
                 initial_sum = float(money_input)
                 if initial_sum <= 0:
                     print("Please enter a valid amount greater than $0.")
+                
+                if initial_sum < 50:
+                    print("The minimum amount is $10. Please enter a valid amount.")
                     continue 
                 break 
 
