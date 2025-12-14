@@ -2,6 +2,8 @@ import random
 import time
 import sys
 
+
+
 def main():
     def intro():
         print("Welcome to Black Jack!")
@@ -20,7 +22,7 @@ def main():
 
             except ValueError:
                 print("Invalid input. Please enter a numerical amount.")
-       
+        
         while True:
             conf = input(f"You have chosen to spend ${initial_sum:.2f} total. Confirm Y/N. ")
             time.sleep(1)
@@ -30,18 +32,19 @@ def main():
                 print("Great! Let's get started.")
                 black_jack(initial_sum)
 
-            elif conf.lower() in ['n', 'no']:
-                print("Restarting amount selection.")
+            if conf.lower() in ['n', 'no']:
+                print("Restarting, Enter new amount.")
                 print("-----------------------------") 
                 time.sleep(1)             
                 return intro() 
+                
             else:
-                print("Invalid input. Please enter Y for Yes or N for No.")
+                time.sleep(1)
+                print("Invalid input. Restarting. Please enter Y for Yes or N for No.")
                 (print("----------------------------"))
                 intro()
-            
-                
-            break
+            break  
+         
         return initial_sum
 
     def create_deck():
@@ -310,6 +313,7 @@ def main():
         return initial_sum
         
     def outro(inital_sum):
+        time.sleep(1)
         print("-----------------------------")
         print(f"You have left the game. Overall you have ${inital_sum} remaining.")
         print("Thank you for playing Black Jack! Goodbye!") 
