@@ -1,5 +1,6 @@
 import random
 import time
+import sys
 
 def main():
     def intro():
@@ -16,24 +17,28 @@ def main():
 
             except ValueError:
                 print("Invalid input. Please enter a numerical amount.")
-                
-        conf = input(f"You have chosen to spend ${initial_sum:.2f} total. Confirm Y/N. ")
-        time.sleep(1)
-        print("-----------------------------")
-                    
-        if conf.lower() not in ['y', 'n', 'yes', 'no']:
-            print("Restarting, please enter Y for Yes or N for No.")
-            intro()
+       
+        while True:
+            conf = input(f"You have chosen to spend ${initial_sum:.2f} total. Confirm Y/N. ")
+            time.sleep(1)
+            print("-----------------------------")
                         
-        elif conf.lower() == 'y' or "yes": 
-            print("Great! Let's get started.")
-            black_jack(initial_sum) 
+            if conf.lower() in ['y', 'yes']: 
+                print("Great! Let's get started.")
+                black_jack(initial_sum)
 
-        elif conf.lower() == 'n' or "no":
-            print("Restarting, Enter a new amount.")
-            print("-----------------------------")              
-            intro()
+            elif conf.lower() in ['n', 'no']:
+                print("Restarting amount selection.")
+                print("-----------------------------") 
+                time.sleep(1)             
+                return intro() 
+            else:
+                print("Invalid input. Please enter Y for Yes or N for No.")
+                (print("----------------------------"))
+                intro()
             
+                
+            break
         return initial_sum
 
     def create_deck():
@@ -75,17 +80,26 @@ def main():
             value -= 10
             ace_count -= 1
         return value
-    
+   
     def black_jack(initial_sum):
 
         print("-----------------------------")
         print(f"Game started with ${initial_sum}. Please Review README.md for game instructions.")
         print("-----------------------------")
         time.sleep(2)
-        betammt = input("How much is your bet for this round? $")
-        betammt_float = float(betammt)
-        
 
+        while True:
+            try:
+                betammt = input("How much is your bet for this round? $")
+                betammt_float = float(betammt)
+                if betammt_float <= 0:
+                    print("Please enter a valid amount greater than $0.")
+                    continue 
+                break 
+
+            except ValueError:
+                print("Invalid input. Please enter a numerical amount.")
+        
         if betammt_float > initial_sum:
             print("-----------------------------")
             print("Bet exceeds available funds. Please enter a valid bet amount.")
@@ -116,7 +130,7 @@ def main():
             print(f"Bet of ${betammt_float} accepted. You have {sum} remaining. Good luck!")
             time.sleep(1)
             game(initial_sum, betammt_float)
-
+    
         return initial_sum , betammt_float
     
     def game(initial_sum, betammt_float):
@@ -171,7 +185,7 @@ def main():
                 time.sleep(1)
 
                 if ph > 21:
-                    print(f"You busted! With a score of {ph}. Dealer wins.")
+                    print(f"You busted! You were dealt {player_hand[-1]} With a score of {ph}. Dealer wins.")
                     print("-----------------------------")
                     win = 0
                     post(initial_sum,win, betammt_float)
@@ -193,12 +207,13 @@ def main():
                     dh = calculate_hand_value(dealer_hand)
                     print(f"Dealer's new card is {dealer_hand[-1]}. Dealer's total is now {dh}.")
                     time.sleep(1)
+                    break
 
-                    if dh > 21:
-                        print("Dealer busted! You win!")
-                        print("-----------------------------")
-                        win = 1
-                        post(initial_sum, win , betammt_float)
+                if dh > 21:
+                    print("Dealer busted! You win!")
+                    print("-----------------------------")
+                    win = 1
+                    post(initial_sum, win , betammt_float)
 
                     time.sleep(1)
 
@@ -242,7 +257,7 @@ def main():
                     win = 2
                     post(initial_sum, win , betammt_float)
                 
-                break 
+                 
             else:
                 print("Invalid input. Please enter 'H', 'Hit', 'S', or 'Stand'.")
 
@@ -274,26 +289,29 @@ def main():
             outro(initial_sum)
 
         elif initial_sum > 0:
-            print("-----------------------------")
-            print(f"You currently have ${initial_sum} remaining.")
-            cont = input("Would you like to play another round? Y/N ").lower()
-            if cont in ('y', 'yes'):
-                black_jack(initial_sum)
+            while True:
+                try:
+                    print("-----------------------------")
+                    print(f"You currently have ${initial_sum} remaining.")
+                    cont = input("Would you like to play another round? Y/N ").lower()
+                    
+                    if cont in ('y', 'yes'):
+                        black_jack(initial_sum)
 
-            elif cont in ('n', 'no'):
-                outro(initial_sum)
+                    elif cont in ('n', 'no'):
+                        outro(initial_sum) 
 
-            else:
-                print("Invalid input. Please enter Y for Yes or N for No.")
-        
+                except ValueError:
+                    print("Invalid input. Please enter Y for Yes or N for No.")
+                
         return initial_sum
         
     def outro(inital_sum):
         print("-----------------------------")
         print(f"You have left the game. Overall you have ${inital_sum} remaining.")
         print("Thank you for playing Black Jack! Goodbye!") 
-
-        return
+        sys.exit(0)
+        
     
     intro()
 
