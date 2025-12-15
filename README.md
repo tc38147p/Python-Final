@@ -48,7 +48,7 @@ GOAL - To get 21 , if not , as close as possible.
         - Withdrawing half the bet
         - Blackjack earns 3:2 of bet amount
     
-    - I Want an A in CS 121
+    - I want an A in CS 121
 
 ----------Outro------------
 

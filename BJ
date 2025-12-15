@@ -315,6 +315,7 @@ def main():
     def outro(inital_sum):
         time.sleep(1)
         print("-----------------------------")
+        time.sleep(1)
         print(f"You have left the game. Overall you have ${inital_sum} remaining.")
         print("Thank you for playing Black Jack! Goodbye!") 
         sys.exit(0)
