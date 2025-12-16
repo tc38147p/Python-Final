@@ -1,8 +1,7 @@
+
 import random
 import time
 import sys
-
-
 
 def main():
     def intro():
@@ -11,6 +10,7 @@ def main():
         while True:
             try:
                 money_input = input("How much money do you wish to spend overall? $")
+                orig = float(money_input)
                 initial_sum = float(money_input)
                 if initial_sum <= 0:
                     print("Please enter a valid amount greater than $0.")
